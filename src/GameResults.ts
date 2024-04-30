@@ -32,6 +32,11 @@ export type GeneralFacts = {
     longestGame: string;
 };
 
+export type WhitePiecePercentEntry = {
+    name: string;
+    percent: string;
+};
+
 
 // External Functions...
 
@@ -133,6 +138,15 @@ export const getAverageGameDurationsByPlayerCount = (grs: GameResult[]) => {
     ;
 };
 
+export const getWhitePiecePercentData = (results: GameResult[]): WhitePiecePercentEntry[] => {
+    
+    const players = getPreviousPlayers(results);
+    
+    return players.map(
+        x => getWhitePiecePercentEntryForPlayer(results, x)
+    );
+};
+
 // Internal Functions...
 
 const getLeaderboardEntryForPlayer = (results: GameResult[], player: string): LeaderboardEntry => {
@@ -173,7 +187,30 @@ const getAvgGameDuration = (grs: GameResult[]) => {
     ;
 };
 
+const getWhitePiecePercentEntryForPlayer = (results: GameResult[], player: string): WhitePiecePercentEntry => {
 
+    // Get player games...
+    // We do this elsewhere around here...
+    const playerGames: GameResult[] = [];
+
+    // Get player games where player was white pieces...
+    // This is the tricky logic, I may not have it correct ? ? ?
+    const playerGamesWhitePieces = playerGames.filter(
+        x => x.players.some(
+            y => y.name === player && y.color === 'white'
+        )
+    );
+
+    return playerGames.length > 0
+        ? {
+            name: player 
+            , percent: 'n/a'
+        }
+        : {
+            name: player 
+            , percent: (playerGamesWhitePieces.length / playerGames.length * 100).toFixed(2)
+        }
+}
 
 
 
